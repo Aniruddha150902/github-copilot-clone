@@ -1,61 +1,48 @@
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-import * as path from 'path';
-import { workspace, ExtensionContext } from 'vscode';
-
+import * as path from "path";
+import * as vscode from "vscode";
 import {
-	LanguageClient,
-	LanguageClientOptions,
-	ServerOptions,
-	TransportKind
-} from 'vscode-languageclient/node';
+  LanguageClient,
+  LanguageClientOptions,
+  ServerOptions,
+  TransportKind,
+} from "vscode-languageclient/node";
 
 let client: LanguageClient;
 
-export function activate(context: ExtensionContext) {
-	// The server is implemented in node
-	const serverModule = context.asAbsolutePath(
-		path.join('server', 'out', 'server.js')
-	);
+export function activate(context: vscode.ExtensionContext) {
+  console.log("Inside Activate Function");
 
-	// If the extension is launched in debug mode then the debug server options are used
-	// Otherwise the run options are used
-	const serverOptions: ServerOptions = {
-		run: { module: serverModule, transport: TransportKind.ipc },
-		debug: {
-			module: serverModule,
-			transport: TransportKind.ipc,
-		}
-	};
+  const serverMoodule = context.asAbsolutePath(
+    path.join("server", "out", "server.js")
+  );
 
-	// Options to control the language client
-	const clientOptions: LanguageClientOptions = {
-		// Register the server for plain text documents
-		documentSelector: [{ scheme: 'file', language: 'plaintext' }],
-		synchronize: {
-			// Notify the server about file changes to '.clientrc files contained in the workspace
-			fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
-		}
-	};
+  const debugOptions = { execArgv: ["--nolazy", "--inspect=6009"] };
 
-	// Create the language client and start the client.
-	client = new LanguageClient(
-		'languageServerExample',
-		'Language Server Example',
-		serverOptions,
-		clientOptions
-	);
+  const serverOptions: ServerOptions = {
+    run: { module: serverMoodule, transport: TransportKind.stdio },
+    debug: {
+      module: serverMoodule,
+      transport: TransportKind.stdio,
+      options: debugOptions,
+    },
+  };
 
-	// Start the client. This will also launch the server
-	client.start();
+  const clientOptions: LanguageClientOptions = {
+    documentSelector: [{ scheme: "file", language: "plaintext" }],
+  };
+
+  client = new LanguageClient(
+    "github-copilot-clone",
+    serverOptions,
+    clientOptions
+  );
+
+  client.start();
 }
 
-export function deactivate(): Thenable<void> | undefined {
-	if (!client) {
-		return undefined;
-	}
-	return client.stop();
+export function deactivate() {
+  if (!client) {
+    return undefined;
+  }
+  return client.stop();
 }
