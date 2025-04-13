@@ -6,6 +6,7 @@
     "node": "*"
   },
   "dependencies": {
+    "openai": "^4.14.0",
     "vscode-languageserver": "^9.0.1"
   },
   "scripts": {}

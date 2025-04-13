@@ -1,0 +1,1 @@
+{"root":["./src/exit.ts","./src/generation.ts","./src/initialize.ts","./src/openaiclient.ts","./src/server.ts","./src/shutdown.ts","./src/template.ts"],"version":"5.8.2"}
