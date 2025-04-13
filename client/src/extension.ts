@@ -77,13 +77,13 @@ const getInlineCompletionItems = async (
     }
 
     try {
-      const response: string = await client.sendRequest(
+      const response = await client.sendRequest(
         "textDocument/generation",
         params,
         cancellationToken
       );
 
-      const snippetCode = new SnippetString(response);
+      const snippetCode = new SnippetString(response["generatedText"]);
       return [new InlineCompletionItem(snippetCode)];
     } catch (error) {
       console.log(`Error While Getting the Inline Completion Items : ${error}`);
@@ -134,7 +134,6 @@ export function activate(context: ExtensionContext) {
         return await getInlineCompletionItems(document, position, mode);
       } catch (error) {
         console.log(`error while Providing Inline Completion Items : ${error}`);
-        throw error;
       }
     },
   };
