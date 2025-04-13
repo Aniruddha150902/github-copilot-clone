@@ -17,7 +17,7 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 
-const EXTENSION_ID = "anisj.github-copilot-clone";
+const EXTENSION_ID = "github-copilot-clone";
 
 let client: LanguageClient;
 
@@ -86,7 +86,8 @@ const getInlineCompletionItems = async (
       const snippetCode = new SnippetString(response);
       return [new InlineCompletionItem(snippetCode)];
     } catch (error) {
-      console.log(error);
+      console.log(`Error While Getting the Inline Completion Items : ${error}`);
+      throw error;
     }
   } else {
     return [];
@@ -125,11 +126,16 @@ export function activate(context: ExtensionContext) {
 
   const provider: InlineCompletionItemProvider = {
     async provideInlineCompletionItems(document, position, _context, _token) {
-      console.log("provideInlineCompletionItems triggered");
+      try {
+        console.log("provideInlineCompletionItems triggered");
 
-      const mode = inLineCompletionConfig["mode"] || "slow";
+        const mode = inLineCompletionConfig["mode"] || "slow";
 
-      return await getInlineCompletionItems(document, position, mode);
+        return await getInlineCompletionItems(document, position, mode);
+      } catch (error) {
+        console.log(`error while Providing Inline Completion Items : ${error}`);
+        throw error;
+      }
     },
   };
   languages.registerInlineCompletionItemProvider({ pattern: "**" }, provider);
