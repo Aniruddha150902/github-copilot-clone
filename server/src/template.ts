@@ -1,4 +1,4 @@
-import { ChatCompletionMessageParam } from "openai/resources";
+import { SystemMessage } from "@langchain/core/messages";
 
 export interface Parameters {
   fsPath: string;
@@ -6,12 +6,8 @@ export interface Parameters {
   max_context?: number;
 }
 
-export const systemPrompt = (
-  paramaters: Parameters
-): ChatCompletionMessageParam => {
-  return {
-    role: "system",
-    content: `
+export const systemPrompt = (paramaters: Parameters) => {
+  return new SystemMessage(`
         Instructions:
             - You are an AI programming assistant.
             - Given a piece of code with the cursor location marked by <CURSOR>, replace <CURSOR> with the correct code.
@@ -32,6 +28,5 @@ export const systemPrompt = (
             - your code should have appropriate spacing.
 
             META_DATA: 
-            ${paramaters?.fsPath}`,
-  };
+            ${paramaters?.fsPath}`);
 };

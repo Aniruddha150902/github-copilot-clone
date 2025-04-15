@@ -1,6 +1,6 @@
 import { Position, RequestMessage } from "vscode-languageserver/node";
-import { ChatCompletionMessageParam } from "openai/resources";
-import { client } from "./openaiClient";
+import { HumanMessage } from "@langchain/core/messages";
+import { model } from "./openaiClient";
 import { Parameters, systemPrompt } from "./template";
 
 interface MessageParamsType {
@@ -66,28 +66,14 @@ const getResponseFromLLM = async (text: string, fsPath: string) => {
       max_context: 1024,
     };
 
-    const message: ChatCompletionMessageParam = {
-      role: "user",
-      content: text,
-    };
+    const messages = [systemPrompt(systemMetaData), new HumanMessage(text)];
 
-    const messages = [systemPrompt(systemMetaData), message];
-
-    const chatCompletion = await client.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages,
-      max_tokens: systemMetaData.max_tokens ?? 128,
-    });
-    if (!chatCompletion) {
+    const chatCompletion = await model.invoke(messages);
+    if (!chatCompletion || !chatCompletion.content) {
       return "";
     }
 
-    const generatedResponse = chatCompletion.choices[0].message.content;
-    if (!generatedResponse) {
-      return "";
-    }
-
-    return generatedResponse;
+    return chatCompletion.content;
   } catch (error) {
     console.error(`error while Getting the Response from LLM : ${error}`);
     throw error;
