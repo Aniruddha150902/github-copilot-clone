@@ -22,7 +22,7 @@ const EXTENSION_ID = "github-copilot-clone";
 let client: LanguageClient;
 
 let lastInlineCompletion = Date.now();
-const lastPosition: Position | null = null;
+let lastPosition: Position | null = null;
 let inlineCompletionRequestCounter = 0;
 
 const inLineCompletionConfig = getConfiguration(
@@ -76,6 +76,8 @@ const getInlineCompletionItems = async (
       cancellationToken = CancellationToken.Cancelled;
     }
 
+    lastPosition = position;
+
     try {
       const response = await client.sendRequest(
         "textDocument/generation",
@@ -86,7 +88,9 @@ const getInlineCompletionItems = async (
       const snippetCode = new SnippetString(response["generatedText"]);
       return [new InlineCompletionItem(snippetCode)];
     } catch (error) {
-      console.log(`Error While Getting the Inline Completion Items : ${error}`);
+      console.error(
+        `Error While Getting the Inline Completion Items : ${error}`
+      );
       throw error;
     }
   } else {
@@ -133,7 +137,9 @@ export function activate(context: ExtensionContext) {
 
         return await getInlineCompletionItems(document, position, mode);
       } catch (error) {
-        console.log(`error while Providing Inline Completion Items : ${error}`);
+        console.error(
+          `error while Providing Inline Completion Items : ${error}`
+        );
       }
     },
   };

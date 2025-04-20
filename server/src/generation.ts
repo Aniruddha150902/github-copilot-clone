@@ -36,7 +36,7 @@ export const generation = async (message: RequestMessage) => {
       generatedText: response,
     };
   } catch (error) {
-    console.log(`error while Generating the Response : ${error}`);
+    console.error(`error while Generating the Response : ${error}`);
     throw error;
   }
 };
@@ -89,7 +89,7 @@ const getResponseFromLLM = async (text: string, fsPath: string) => {
 
     return generatedResponse;
   } catch (error) {
-    console.log(`error while Getting the Response from LLM : ${error}`);
+    console.error(`error while Getting the Response from LLM : ${error}`);
     throw error;
   }
 };

@@ -24,7 +24,7 @@
           "type": "object",
           "default": {
             "mode": "slow",
-            "maxCompletionsPerSecond": 2
+            "maxCompletionsPerSecond": 0.5
           },
           "description": "Settings for the inline completion behavior."
         }
